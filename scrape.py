@@ -80,34 +80,3 @@ def get_internships():
         return JSONResponse(content=data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-# def clean_body_content(body_content):
-#     soup = BeautifulSoup(body_content, "html.parser")
-
-#     for script_or_style in soup(["script", "style"]):
-#         script_or_style.extract()
-
-#     # Get text or further process the content
-#     cleaned_content = soup.get_text(separator="\n")
-#     cleaned_content = "\n".join(
-#         line.strip() for line in cleaned_content.splitlines() if line.strip()
-#     )
-
-#     return cleaned_content
-
-
-# def split_dom_content(dom_content, max_length=8000):
-#     return [
-#         dom_content[i : i + max_length] for i in range(0, len(dom_content), max_length)
-#     ]
-
-# ====================================
-# DONE!
-#  Let's get the data from what we scrapped from selenium and actually provide all the info without
-#  using AI since it is very slow. WE'll turn it into a json object (dictionary) and then provide it back with a good UI
-
-# Now it's time to let the user parse the info into what they want to see:
-# allow to check what they want to see
-# don't allow user to input any website url
-# start applying good ui with react,
