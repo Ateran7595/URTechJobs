@@ -7,3 +7,5 @@ lxml
 html5lib
 python-dotenv
 uvicorn[standard]
+google-genai
+python-dotenv
