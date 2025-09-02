@@ -252,7 +252,7 @@ def generate(resume_text: str) -> str:
         - Do NOT add or modify <html> or <body> background colors.
 
         === FEEDBACK ===
-        [3–6 concise bullet points on key improvements made (plain text, no LaTeX).]
+        [3-4 concise bullet points on key improvements made (plain text, no LaTeX).]
                 """),
             ],
         ),
