@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
 import selenium.webdriver as webdriver
 from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
 import pandas as pd
+import pdfplumber
 from fastapi.middleware.cors import CORSMiddleware
+from extractText import extract_text_from_pdf
+from resumeUpgrader import generate
 
 app = FastAPI()
 
@@ -16,6 +19,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/internships")
+def get_internships():
+    try:
+        url = "https://github.com/SimplifyJobs/Summer2026-Internships"
+        html = scrape_website(url)
+        data = extract_body_content(html)
+        if not data:
+            raise HTTPException(status_code=404, detail="No data found")
+        return JSONResponse(content=data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def extract_text_from_pdf(file):
+    text = ""
+    with pdfplumber.open(file) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text() + "\n"
+    return text.strip()
+
+@app.post("/resume/upload")
+async def upload_resume(file: UploadFile = File(...)):
+    try:
+        # Extract text
+        resume_text = extract_text_from_pdf(file.file)
+        if not resume_text:
+            raise HTTPException(status_code=400, detail="Could not extract text from PDF")
+
+        # Generate upgraded resume
+        upgraded_resume = generate(resume_text)
+
+        return {"upgraded_text": upgraded_resume}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 def scrape_website(website: str):
     chrome_driver_path = "./chromedriver.exe"
@@ -68,15 +104,3 @@ def extract_body_content(html_content):
             })
 
     return data
-
-@app.get("/internships")
-def get_internships():
-    try:
-        url = "https://github.com/SimplifyJobs/Summer2026-Internships"
-        html = scrape_website(url)
-        data = extract_body_content(html)
-        if not data:
-            raise HTTPException(status_code=404, detail="No data found")
-        return JSONResponse(content=data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

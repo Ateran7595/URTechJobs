@@ -1,5 +1,3 @@
-
-
 # To run this code you need to install the following dependencies:
 # pip install google-genai
 
@@ -11,9 +9,211 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-resume_text = '915-267-7372 Alejandro Teran atteran@miners.utep.edu El Paso, TX https://github.com/Ateran7595/ https://www.linkedin.com/in/alejandro-teran795/ https://ateran7595-portfolio.vercel.app/ Objective Aspiring Software Engineer pursuing a Bachelor’s in Computer Science at UTEP with hands-on experience building real-world solutions through internships and personal projects. Passionate about full-stack development, mobile apps, and AI-powered tools that improve user experience and accessibility. Eager to continue growing through impactful software engineering roles. Education University of Texas at El Paso (UTEP) Bachelor of Science in Computer Science Work Experience Expected Graduation: Dec 2026 El Paso, TX Software Developer Intern @ Modo Labs 6/2025– 8/2025– Completed training to get to know Modo Labs’ platform and learn how to use AWS-based infrastructure.– Developed an advisor database that automatically filters each student’s assigned advisor based on department and major, integrating Calendly scheduling and real-time contact options.– Developed a scalable events module supporting event registration, calendar sync, and filtering by club or department, improving accessibility for 25,000+ UTEP students. Frontend Developer Volunteer @ Visionary Solutions of Virginia 3/2025- 6/2025– Design and develop accessible, user-friendly web interfaces using Figma and Wix.– Myrole included optimizing performance, ensuring WCAG compliance, collaborating with designers and developers, and enhancing user experience through research and feedback. Projects Space Object Tracker Java, OOP, Design Patterns, JUnit– Java console app tracking LEO objects using Strategy and Template Method patterns.– Modeled extensible objects like Satellite and Debris with filter and impact analysis behaviors.– Maintained test coverage with JUnit-based unit testing. Church Website React, Node.js, Firebase– Launched a responsive site featuring dynamic events, newsletter subscriptions, and automated email updates, boosting engagement among more than 100 users.– Used Firebase for real-time data and EmailJS API to streamline communication. RTrip– AI Travel Destination Finder React, Node.js, GeminiAI, Firebase– Built AI-powered travel app with GeminiAI, Google Places, and Unsplash APIs for rich recommendations.– Enabled secure login via Google Auth; built scalable backend with Firebase + Node.js.. Leadership & Involvement Officer, Web/App Development Club University of Texas at El Paso 1/2025- Present El Paso, TX– Assist students by answering questions, providing guidance, and creating example projects to foster practical learning in web and app development. Organize and lead workshops to develop technical skills and encourage collaboration and networking among peers. Skills Technical skills: Java, JavaScript, ReactJS, Node.js, Express, HTML, CSS, TailwindCSS, GeminiAI. Databases & Tools: Firebase, MongoDB, PostgreSQL, AWS, Git, GitHub, Jira, Postman, JUnit.'
+latex_template = r"""\documentclass[letterpaper,11pt]{article}
 
-def generate():
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\setlength{\multicolsep}{-3.0pt}
+\setlength{\columnsep}{-1pt}
+\input{glyphtounicode}
+\usepackage[margin=1.4cm]{geometry}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.15in}
+ \addtolength{\textwidth}{0.3in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{0pt}}
+  }
+}
+
+\newcommand{\classesList}[4]{
+    \item\small{
+        {#1 #2 #3 #4 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{\small #2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{1.001\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textbf{\small #2}\\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}\vspace{0pt}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    {\Large \scshape Michael Scott} \\[2mm]
+    \footnotesize \raisebox{-0.1\height}
+    \faPhone\ \underline{(123) 456-7890} ~ 
+    {\faEnvelope\  \underline{mscott@example.com}} ~ 
+    {\faLinkedin\ \underline{\href{https://www.linkedin.com/in/michael-scott/}{linkedin.com/in/michael-scott}}  ~
+    {\faGithub\ \underline{\href{https://github.com/m-scott}{github.com/m-scott}} ~
+    {\faBriefcase\ \underline{\href{https://mscott-portfolio.vercel.app/}{mscott-portfolio.vercel.app/}}
+    \vspace{-8pt}
+\end{center}
+
+ %-----------EDUCATION-----------
+\section{Education} \\[1mm]
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {University}{Expected Graduation: May 2026}
+      {Bachelor of Computer Engineering | Minor Artificial Intelligence
+      }{Location}
+  \resumeSubHeadingListEnd
+    \resumeItemListStart
+        \resumeItem {Golden Key Honours Scholar | \textbf{GPA: 3.78}}
+        \vspace{-7pt}
+        \resumeItem {Courses: Software Engineering Practice, Applied Machine Learning, Operating Systems, Computer Architecture, Model-Based Programming, Algorithms and Data Structures, Intro. to Software Engineering}
+    \resumeItemListEnd
+    \vspace{-12pt}
+%-----------Experience---------------
+\section{Work Experience}
+    \resumeSubHeadingListStart
+                \resumeSubheading{Tech Company}{May 2024 -- Sep 2024}{Machine Learning Engineer Intern}{Location} 
+                \resumeItemListStart
+                    \resumeItem{Engineered \textbf{Large Language Models (LLMs)}, including \textbf{BERT} and \textbf{Attention Models}, to analyze software engineering requirements and generate accurate dependency lists, improving project planning efficiency by \textbf{37\%}}
+                    \resumeItem{Analyzed \textbf{1200+} software requirements monthly using \textbf{scikit-learn (classification models)}, \textbf{spaCy}, and \textbf{NLTK} in \textbf{Python}, saving the company \textbf{\$20,000 annually} by decreasing project lead times}
+                    \resumeItem{Integrated \textbf{TF-IDF vectorization} to detect similarities in software requirements, focusing on \textbf{preprocessing}, \textbf{model training}, \textbf{hyperparameter tuning} and \textbf{clustering} to optimize \textbf{NLP} analysis processes}
+                    \resumeItemListEnd
+            \resumeSubheading{Tech Company}{May 2023 -- Sep 2023}{Backend Engineer Intern}{Location} 
+                \resumeItemListStart
+                    \resumeItem{Designed \textbf{30+ AWS Lambda Functions}, strategically leveraging \textbf{Lambda layers} to increase processing speed by \textbf{35\%} and re-usability by \textbf{52\%}, resulting in cost savings of \textbf{\$1,000} per large scale deployment}
+                    \resumeItem{Implemented \textbf{15+} server less workflows using \textbf{AWS Step Functions}, seamlessly integrating \textbf{REST APIs} and rigorously tested with \textbf{Postman},  resulting in a \textbf{65\%} reduction in execution time and enhanced operational efficiency}
+                    \resumeItem{Crafted a \textbf{Spring Boot} application with a \textbf{Drools} logic engine, containerized it using \textbf{Docker}, and seamlessly deployed it on \textbf{AWS} using \textbf{EC2}, strategically allocating cloud resources to ensure enhanced scalability and reliability}
+                    \resumeItemListEnd
+            \resumeSubheading{Tech Company}{Jun 2022 -- Sep 2022}{Software Engineer Intern}{Location}
+                \resumeItemListStart
+                    \resumeItem{Programmed and deployed a \textbf{Python}-based data migration pipeline on \textbf{Azure}, achieving a \textbf{50\% reduction} in transfer time for \textbf{100+ terabytes} of critical business data}
+                    \resumeItem{Centralized a \textbf{SQL} database infrastructure on \textbf{Azure}, enhancing data accessibility and security for \textbf{50+ stakeholders}, resulting in a \textbf{30\% improvement} in query performance across the organization}
+                    \resumeItemListEnd
+    \resumeSubHeadingListEnd
+    \vspace{-12pt}
+
+%-----------PROJECTS-----------
+\section{Projects} 
+    \vspace{-5pt}
+    \resumeSubHeadingListStart
+    \resumeProjectHeading
+            {\textbf{{McGill Scheduler}} $|$ \emph{\href{https://mcgillscheduler.vercel.app/}{Website}{ $|$ }\href{https://github.com/Erik-Cupsa/McGill-Scheduler}{Source Code}}}{ReactJS $|$ Spring Boot $|$ PostgreSQL}
+            \\[5mm]
+          \resumeItemListStart
+            \resumeItem{Developed and deployed a full-stack web application that enhanced academic experiences of \textbf{1,000+ McGill students}}
+            \resumeItem{Utilized \textbf{PostgreSQL} for data storage, \textbf{Spring Boot} for a \textbf{RESTful API} backend, and \textbf{ReactJS} for the user interface}
+          \resumeItemListEnd
+ \vspace{-20pt}
+ \resumeProjectHeading
+            {\textbf{{Empor}} $|$ \emph{\href{https://empor.ca/}{Website}}}{NextJS $|$ TypeScript $|$ Spring Boot}
+            \\[5mm]
+          \resumeItemListStart
+            \resumeItem{\textbf{Led the development} of a full-stack marketplace application for \textbf{1,000+ university students}, utilizing \textbf{NextJS} and \textbf{TypeScript} for the frontend, \textbf{Prisma} as the ORM, \textbf{Supabase} for the database, and a \textbf{Spring Boot} backend}
+          \resumeItemListEnd
+ \vspace{-17pt}
+ \resumeProjectHeading
+{\textbf{{Premier League Match Predictor}} $|$ \emph{\href{https://premierzone.vercel.app/}{Website}{ $|$ }\href{https://github.com/Erik-Cupsa/PLWebsite}{Source Code}}}{Pandas $|$ Scikit-Learn $|$ Python}
+\\[5mm]
+\resumeItemListStart
+\resumeItem{Created a model to predict matches, integrating \textbf{data scraping} with \textbf{pandas} and \textbf{machine learning} with \textbf{scikit-learn}}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+\vspace{-28pt}
+%-----------LEADERSHIP-----------
+\section{Leadership} 
+    \vspace{-5pt}
+    \resumeSubHeadingListStart
+                   \resumeProjectHeading
+            {\textbf{{SWErikCodes}} $|$\emph{{\href{https://www.tiktok.com/@swerikcodes?lang=en}{ TikTok $|$}\href{https://www.youtube.com/channel/UCgKFOz_KrMbmypWrawtzDQg}{ YouTube $|$}\href{https://www.instagram.com/swerikcodes/}{ Instagram}}}}{Jun 2023 -- Present}
+            \\[5mm]
+          \resumeItemListStart
+            \resumeItem{Created educational coding content for \textbf{75,000+} developers, with \textbf{4,200,000+} impressions per month}
+            \resumeItem{Produced coding tutorials on advanced topics such as \textbf{data structures}, \textbf{algorithms}, and \textbf{software design principles}}
+          \resumeItemListEnd
+          \resumeSubHeadingListEnd
+ \vspace{-12pt}
+  %-----------PROGRAMMING SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{   
+     \textbf{Languages}{: Python, Java, SQL, HTML5, CSS, JavaScript, Go, C, VHDL} \\[1mm]
+     \textbf{Developer Tools}{: AWS, Postman, PowerBI, Git, Azure, Docker, Jira} \\[1mm]
+     \textbf{Libraries/Frameworks}{: Spring Boot, ReactJS, PostgreSQL, NextJS, VueJS, NodeJS} \\ [1mm]
+    }}
+ \end{itemize}
+ \vspace{-16pt}
+ \vspace{3pt}
+\vspace{10pt}
+
+\vspace{-15pt}
+
+
+
+\end{document}"""
+
+def generate(resume_text: str) -> str:
     client = genai.Client(
         api_key=os.environ.get("GEMINI_API_KEY"),
     )
@@ -21,31 +221,39 @@ def generate():
     model = "gemini-2.5-flash-lite"
     contents = [
         types.Content(
-            role="user",
-            parts=[
-                types.Part.from_text(text="""You are an expert resume writer and career coach. 
-Your job is to upgrade resumes to make them more professional, impactful, and ATS-friendly.
+        role="user",
+        parts=[types.Part.from_text(text=f"""
+        You are an expert resume writer and career coach. Your job is to upgrade resumes to be professional, impactful, and ATS-friendly.
 
-The user has uploaded the following resume text:
-<<<RESUME_START>>>
-{resume_text}
-<<<RESUME_END>>>
+        The user has uploaded this resume:
+        <<<RESUME_START>>>
+        {resume_text}
+        <<<RESUME_END>>>
 
-Please:
-1. Rewrite each bullet point with strong action verbs, measurable results (if implied), and concise phrasing.  
-2. Improve clarity, grammar, and readability.  
-3. Keep section headers (Education, Experience, Skills, Projects, etc.).  
-4. Format the final output in clean plain text with bullet points.  
-5. Do not invent new jobs, skills, or degrees that are not in the original resume.  
-6. Only enhance what is there. If no specific metrics are provided, make implied results more explicit.  
+        Please:
+        1. Rewrite each bullet with strong action verbs, measurable results (if implied), and concise phrasing.
+        2. Improve clarity, grammar, and readability.
+        3. Keep all section headers (Education, Work Experience, Projects, Skills, Leadership, etc.).
+        4. Format the output as **full LaTeX code** using this exact template (retain all custom commands, environments, spacing, and fontawesome icons):
+        {latex_template}
+        5. Do not invent new jobs, skills, or degrees. Only enhance existing content.
+        6. Make implied results explicit if possible (all metrics must be **bold**).
+        7. Ensure valid LaTeX that compiles with pdflatex or any LaTeX engine.
 
-Return your answer in two sections:
+        Return your answer in three sections:
 
-=== UPGRADED RESUME ===
-[Rewritten Resume Here]
+        === UPGRADED RESUME (LATEX) ===
+        [Full LaTeX code of upgraded resume]
 
-=== FEEDBACK ===
-[3–6 short bullet points explaining the key improvements you made.]"""),
+        === UPGRADED RESUME (HTML) ===
+        Provide the complete HTML version of the resume, WHICH SHOULD HAVE THE SAME FORMAT AS LATEX.
+        - Match the LaTeX formatting (fonts, spacing, bullet points).
+        - Ensure bullet points are cleanly formatted.
+        - Do NOT add or modify <html> or <body> background colors.
+
+        === FEEDBACK ===
+        [3–6 concise bullet points on key improvements made (plain text, no LaTeX).]
+                """),
             ],
         ),
         types.Content(
@@ -67,12 +275,12 @@ Return your answer in two sections:
         ),
     )
 
+    upgraded_resume = ""
     for chunk in client.models.generate_content_stream(
         model=model,
         contents=contents,
         config=generate_content_config,
     ):
-        print(chunk.text, end="")
+        upgraded_resume += chunk.text
 
-if __name__ == "__main__":
-    generate()
+    return upgraded_resume

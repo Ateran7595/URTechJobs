@@ -13,6 +13,12 @@ h1, h2 {
   line-height: 1.1;
 }
 
+.resume-preview * {
+  all: revert; /* resets inherited/global styles */
+  font-family: inherit; /* keep parent font if needed */
+  color: inherit;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

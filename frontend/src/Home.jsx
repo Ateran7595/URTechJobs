@@ -13,11 +13,13 @@ function Home() {
             <div className='flex justify-center items-center gap-3'>
                 <button
                 onClick={() => navigate("/internships")}
-                className="px-6 py-2 rounded-2xl bg-sky-400 text-white font-semibold hover:bg-sky-600"
+                className="px-6 py-2 rounded-2xl bg-sky-400 text-white font-semibold hover:bg-sky-600 hover:cursor-pointer"
                 >
                 Browse Internships
                 </button>
-                <button className='px-6 py-2 rounded-2xl bg-emerald-400 text-white font-semibold hover:bg-emerald-600'>Improve My Resume</button>
+                <button 
+                onClick={() => navigate("/resumeupgrader")}
+                className='px-6 py-2 rounded-2xl bg-emerald-400 text-white font-semibold hover:bg-emerald-600 hover:cursor-pointer'>Improve My Resume</button>
             </div>
         </div>
     )
