@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import html2pdf from "html2pdf.js";
 
 function ResumeUpgrader() {
   const [file, setFile] = useState(null);
@@ -97,6 +98,55 @@ function ResumeUpgrader() {
     }    
   };
 
+  const downloadPDF = () => {
+    const element = document.createElement("div");
+    element.innerHTML = htmlCode// use your iframe HTML
+
+    html2pdf()
+      .from(element)
+      .set({
+        margin: [0.25, 0.25, 0.25, 0.25],
+        filename: "resume.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 1.5 },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+      })
+      .save();
+  };
+
+  const responsiveHtml = htmlCode.replace(
+    "<head>",
+    `<head>
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center; /* center horizontally */
+          align-items: flex-start; /* align content to top */
+          min-height: 100vh;
+          box-sizing: border-box;
+        }
+        .container {
+          width: 100%;
+          max-width: 900px; /* fit nicely inside iframe */
+          padding: 20px;
+          box-sizing: border-box;
+        }
+      </style>
+    </head>`
+  );
+  
+  const iframeStyle = {
+    width: "100%",
+    minHeight: "80vh",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    backgroundColor: "white",
+  };
+
   return (
     <div className="p-6 flex flex-col gap-4 w-[100%]">
       <h1 className="text-emerald-400 font-semibold text-center text-[60px] font-bungee">
@@ -133,14 +183,20 @@ function ResumeUpgrader() {
         //   <p className="resume-preview border p-4 rounded mt-4 bg-white text-black">{resumeText}</p>
         // </div>
         <div className="flex flex-col p-2">
-          
           <iframe
-            className="w-[900px] border rounded bg-white p-2 text-black"
-            style={{ minHeight: "80vh" }}
-            srcDoc={htmlCode}
+            // className="w-full border rounded bg-white p-4 text-black"
+            style={iframeStyle}
+            srcDoc={responsiveHtml}
           />
-          <div className="w-[900px] text-white">
-              <p className="p-4 rounded mt-4">
+          <button
+            onClick={downloadPDF}
+            className="mt-4 px-4 py-2 bg-sky-400 text-white rounded hover:cursor-pointer hover:bg-sky-600 font-semibold"
+          >
+            Download as PDF
+          </button>
+          <div className="w-[900px] text-white m-auto">
+            <h1 className="text-center mt-6 font-inter font-bold text-2xl ">Feedback</h1>
+            <p className="px-4 pb-4 rounded">
             {feedbackText.length > 0 && (
               <ul className="list-disc pl-6 mt-4">
                 {feedbackText.map((item, idx) => (
@@ -182,8 +238,10 @@ function ResumeUpgrader() {
               Open in Overleaf
             </a>
           </div>
+          <p className="text-center text-sm text-gray-400 mt-2"><em>Note: This feature was AI-assisted. While every effort has been made to ensure accuracy, some content may require manual review. For best results, the LaTeX version is recommended.</em></p>
         </div>
       )}
+      
     </div>
   );
 }
