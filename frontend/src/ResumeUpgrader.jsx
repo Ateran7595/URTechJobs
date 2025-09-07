@@ -24,7 +24,8 @@ function ResumeUpgrader() {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/resume/upload", {
+      const API_URL = "https://urtechjobs.onrender.com";
+      const response = await fetch(`${API_URL}/resume/upload`, {
         method: "POST",
         body: formData,
       });
