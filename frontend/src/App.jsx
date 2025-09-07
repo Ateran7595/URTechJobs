@@ -27,10 +27,10 @@ function App() {
 
   return (
     <div className='flex flex-col justify-center items-center gap-5 '>
-      <h1 className='text-sky-400 font-semibold text-[50px] font-bungee text-center'>
+      <h1 className='text-sky-400 font-semibold md:text-[50px] xs:text-[30px] font-bungee text-center'>
         Find Your Next Tech Internship!
       </h1>
-      <h2 className='text-gray-300 text-center text-lg mt-2'>
+      <h2 className='text-center font-inter font-semibold text-sky-200 md:text-2xl xs:text-[15px] '>
         Browse hundreds of openings and apply today
       </h2>
       {loading ? (

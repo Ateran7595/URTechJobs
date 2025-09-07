@@ -20,8 +20,7 @@ function InternshipTable({ internships }) {
       });
   
     return (
-      <div className="w-full">
-        {/* 🔎 Filter controls */}
+      <div className="md:w-full">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
           <input
             type="text"
@@ -40,70 +39,86 @@ function InternshipTable({ internships }) {
             Most Recent
           </label>
         </div>
-  
-        {/* 📋 Table */}
-        <table className="w-full border-collapse rounded-xl overflow-hidden shadow-lg">
-          <thead>
-            <tr className="bg-gray-800 text-gray-100 text-left">
-              <th className="px-6 py-3">Company</th>
-              <th className="px-6 py-3">Role</th>
-              <th className="px-6 py-3">Location</th>
-              <th className="px-6 py-3">Posted</th>
-              <th className="px-6 py-3">Apply</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredInternships.length > 0 ? (
-              filteredInternships.map((item, i) => (
-                <tr
-                  key={i}
-                  className="odd:bg-gray-900 even:bg-gray-800 hover:bg-gray-700 transition-colors"
-                >
-                  <td className="px-6 py-3 font-medium text-blue-400">
-                    {item.Company_URL ? (
-                      <a
-                        href={item.Company_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:underline"
-                      >
-                        {item.Company}
-                      </a>
-                    ) : (
-                      item.Company
-                    )}
-                  </td>
-                  <td className="px-6 py-3 text-gray-200">{item.Role}</td>
-                  <td className="px-6 py-3 text-gray-200">{item.Location}</td>
-                  <td className="px-6 py-3 text-gray-400">{item.Posted}</td>
-                  <td className="px-6 py-3">
-                    {item.Apply_URL ? (
-                      <a
-                        href={item.Apply_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-3 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition"
-                      >
-                        Apply
-                      </a>
-                    ) : (
-                      <span className="text-gray-500">N/A</span>
-                    )}
+        <div className="w-full overflow-x-auto rounded-xl shadow-lg">
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-800 text-gray-100 text-left text-xs xs:text-sm sm:text-base">
+                <th className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3">Company</th>
+                <th className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3">Role</th>
+                {/* Hidden on mobile */}
+                <th className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3 hidden sm:table-cell">Location</th>
+                <th className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3 hidden sm:table-cell">Posted</th>
+                <th className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3">Apply</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredInternships.length > 0 ? (
+                filteredInternships.map((item, i) => (
+                  <tr
+                    key={i}
+                    className="odd:bg-gray-900 even:bg-gray-800 hover:bg-gray-700 transition-colors text-xs xs:text-sm sm:text-base"
+                  >
+                    {/* Company */}
+                    <td className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3 font-medium text-blue-400">
+                      {item.Company_URL ? (
+                        <a
+                          href={item.Company_URL}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:underline"
+                        >
+                          {item.Company}
+                        </a>
+                      ) : (
+                        item.Company
+                      )}
+                    </td>
+
+                    {/* Role */}
+                    <td className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3 text-gray-200">
+                      {item.Role}
+                    </td>
+
+                    {/* Location → hidden on mobile */}
+                    <td className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3 text-gray-200 hidden sm:table-cell">
+                      {item.Location}
+                    </td>
+
+                    {/* Posted → hidden on mobile */}
+                    <td className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3 text-gray-400 hidden sm:table-cell">
+                      {item.Posted}
+                    </td>
+
+                    {/* Apply */}
+                    <td className="px-3 xs:px-4 sm:px-6 py-2 sm:py-3">
+                      {item.Apply_URL ? (
+                        <a
+                          href={item.Apply_URL}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-2 sm:px-3 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition text-xs sm:text-sm"
+                        >
+                          Apply
+                        </a>
+                      ) : (
+                        <span className="text-gray-500">N/A</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="text-center py-6 text-gray-400 italic text-xs sm:text-sm"
+                  >
+                    No internships found.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="5"
-                  className="text-center py-6 text-gray-400 italic"
-                >
-                  No internships found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
 }

@@ -6,20 +6,20 @@ function Home() {
     
     return (
         <div className='flex flex-col gap-3'>
-            <h1 className='text-sky-400 font-semibold text-[90px] font-bungee'>URTechJobs</h1>
-            <h2 className='text-center font-inter font-semibold text-sky-200 text-2xl'>
+            <h1 className='text-sky-400 font-semibold md:text-[90px] xs:text-[42px] text-center font-bungee'>URTechJobs</h1>
+            <h2 className='text-center font-inter font-semibold text-sky-200 md:text-2xl xs:text-[15px] '>
                 Finding Tech Internships has never been easier!
             </h2>
             <div className='flex justify-center items-center gap-3'>
                 <button
                 onClick={() => navigate("/internships")}
-                className="px-6 py-2 rounded-2xl bg-sky-400 text-white font-semibold hover:bg-sky-600 hover:cursor-pointer"
+                className="md:px-6 xs:px-3 py-2 md:text-[15px] xs:text-[12px] rounded-2xl bg-sky-400 text-white md:font-semibold xs:font-bold hover:bg-sky-600 hover:cursor-pointer"
                 >
                 Browse Internships
                 </button>
                 <button 
                 onClick={() => navigate("/resumeupgrader")}
-                className='px-6 py-2 rounded-2xl bg-emerald-400 text-white font-semibold hover:bg-emerald-600 hover:cursor-pointer'>Improve My Resume</button>
+                className='md:px-6 xs:px-3 py-2 md:text-[15px] xs:text-[12px] rounded-2xl bg-emerald-400 text-white md:font-semibold xs:font-bold hover:bg-emerald-600 hover:cursor-pointer'>Improve My Resume</button>
             </div>
         </div>
     )

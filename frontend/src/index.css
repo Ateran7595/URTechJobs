@@ -3,6 +3,7 @@
 @import "tailwindcss";
 
 @theme {
+  --breakpoint-xs: 360px;
   --font-inter: "Inter", sans-serif;
   --font-press: "Press Start 2P", system-ui;
 }

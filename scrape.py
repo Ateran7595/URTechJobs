@@ -4,6 +4,7 @@ import selenium.webdriver as webdriver
 from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
 import pandas as pd
+import json, os, time
 import pdfplumber
 from fastapi.middleware.cors import CORSMiddleware
 from extractText import extract_text_from_pdf
@@ -19,14 +20,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+CACHE_FILE = "internships_cache.json"
+CACHE_TTL = 3600  # cache valid for 1 hour (3600 seconds)
+
+def fetch_or_scrape_internships():
+    # If cache exists and is still valid, use it
+    if os.path.exists(CACHE_FILE):
+        if time.time() - os.path.getmtime(CACHE_FILE) < CACHE_TTL:
+            with open(CACHE_FILE, "r") as f:
+                return json.load(f)
+    # Otherwise, scrape fresh
+    url = "https://github.com/SimplifyJobs/Summer2026-Internships"
+    html = scrape_website(url)
+    data = extract_body_content(html)
+    if not data:
+        raise HTTPException(status_code=404, detail="No data found")
+    # Save cache
+    with open(CACHE_FILE, "w") as f:
+        json.dump(data, f)
+    return data
+
 @app.get("/internships")
 def get_internships():
     try:
-        url = "https://github.com/SimplifyJobs/Summer2026-Internships"
-        html = scrape_website(url)
-        data = extract_body_content(html)
-        if not data:
-            raise HTTPException(status_code=404, detail="No data found")
+        data = fetch_or_scrape_internships()
         return JSONResponse(content=data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
