@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css'
 import App from './App.jsx'
-import Home from './home.jsx'
 import ResumeUpgrader from './ResumeUpgrader.jsx';
+import Home from './Home.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
