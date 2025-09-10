@@ -12,3 +12,5 @@ python-dotenv
 pdfplumber
 fastapi
 python-multipart
+fastapi-utils
+typing-inspect

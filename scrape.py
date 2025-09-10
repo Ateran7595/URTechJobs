@@ -9,51 +9,65 @@ import pdfplumber
 from fastapi.middleware.cors import CORSMiddleware
 from extractText import extract_text_from_pdf
 from resumeUpgrader import generate
-import threading, time
+from fastapi_utils.tasks import repeat_every
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-            "http://localhost:5173",            # local dev frontend
-            "https://ur-tech-jobs.vercel.app"   # deployed frontend
-    ],  
+    allow_origins=["*"],  # React frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-CACHE_TTL = 900  # 15 minutes
-cached_data = None
-last_fetch = 0
+CACHE_FILE = "internships_cache.json"
+CACHE_TTL = 300  # 5 minutes
 
-def scrape_and_update_cache():
-    global cached_data, last_fetch
+# Modify fetch_or_scrape_internships to just scrape and update cache
+def fetch_or_scrape_internships(force_scrape=False):
+    if not force_scrape and os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, "r") as f:
+            return json.load(f)
+
+    # scrape fresh data
     url = "https://github.com/SimplifyJobs/Summer2026-Internships"
     html = scrape_website(url)
     data = extract_body_content(html)
-    if data:
-        cached_data = data
-        last_fetch = time.time()
+    if not data:
+        raise HTTPException(status_code=404, detail="No data found")
 
-def background_refresh():
-    while True:
-        scrape_and_update_cache()
-        time.sleep(CACHE_TTL)
+    with open(CACHE_FILE, "w") as f:
+        json.dump(data, f)
+    return data
 
+# Background updater task
 @app.on_event("startup")
-def start_background_refresh():
-    threading.Thread(target=background_refresh, daemon=True).start()
+@repeat_every(seconds=300)  # every 5 minutes
+def update_cache_task():
+    try:
+        fetch_or_scrape_internships(force_scrape=True)
+        print("Internships cache updated")
+    except Exception as e:
+        print(f"Failed to update internships cache: {e}")
 
+# Endpoint just reads from cache
 @app.get("/internships")
-def get_internships():
-    if cached_data:
-        return JSONResponse(content=cached_data)
-    else:
-        # fallback: scrape once if cache not ready
-        scrape_and_update_cache()
-        return JSONResponse(content=cached_data)
+def get_internships(force_refresh: bool = False):
+    try:
+        if force_refresh:
+            # bypass cache
+            data = fetch_or_scrape_internships(force_scrape=True)
+        else:
+            if os.path.exists(CACHE_FILE):
+                with open(CACHE_FILE, "r") as f:
+                    data = json.load(f)
+            else:
+                # cache doesn't exist yet, scrape once
+                data = fetch_or_scrape_internships(force_scrape=True)
+        return JSONResponse(content=data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 def extract_text_from_pdf(file):
     text = ""
