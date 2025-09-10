@@ -9,6 +9,7 @@ import pdfplumber
 from fastapi.middleware.cors import CORSMiddleware
 from extractText import extract_text_from_pdf
 from resumeUpgrader import generate
+import threading, time
 
 app = FastAPI()
 
@@ -20,33 +21,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-CACHE_FILE = "internships_cache.json"
-CACHE_TTL = 3600  # cache valid for 1 hour (3600 seconds)
+CACHE_TTL = 900  # 15 minutes
+cached_data = None
+last_fetch = 0
 
-def fetch_or_scrape_internships():
-    # If cache exists and is still valid, use it
-    if os.path.exists(CACHE_FILE):
-        if time.time() - os.path.getmtime(CACHE_FILE) < CACHE_TTL:
-            with open(CACHE_FILE, "r") as f:
-                return json.load(f)
-    # Otherwise, scrape fresh
+def scrape_and_update_cache():
+    global cached_data, last_fetch
     url = "https://github.com/SimplifyJobs/Summer2026-Internships"
     html = scrape_website(url)
     data = extract_body_content(html)
-    if not data:
-        raise HTTPException(status_code=404, detail="No data found")
-    # Save cache
-    with open(CACHE_FILE, "w") as f:
-        json.dump(data, f)
-    return data
+    if data:
+        cached_data = data
+        last_fetch = time.time()
+
+def background_refresh():
+    while True:
+        scrape_and_update_cache()
+        time.sleep(CACHE_TTL)
+
+@app.on_event("startup")
+def start_background_refresh():
+    threading.Thread(target=background_refresh, daemon=True).start()
 
 @app.get("/internships")
 def get_internships():
-    try:
-        data = fetch_or_scrape_internships()
-        return JSONResponse(content=data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    if cached_data:
+        return JSONResponse(content=cached_data)
+    else:
+        # fallback: scrape once if cache not ready
+        scrape_and_update_cache()
+        return JSONResponse(content=cached_data)
 
 def extract_text_from_pdf(file):
     text = ""
@@ -54,21 +58,6 @@ def extract_text_from_pdf(file):
         for page in pdf.pages:
             text += page.extract_text() + "\n"
     return text.strip()
-
-@app.post("/resume/upload")
-async def upload_resume(file: UploadFile = File(...)):
-    try:
-        # Extract text
-        resume_text = extract_text_from_pdf(file.file)
-        if not resume_text:
-            raise HTTPException(status_code=400, detail="Could not extract text from PDF")
-
-        # Generate upgraded resume
-        upgraded_resume = generate(resume_text)
-
-        return {"upgraded_text": upgraded_resume}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 def scrape_website(website: str):
     chrome_driver_path = "./chromedriver.exe"
@@ -121,3 +110,18 @@ def extract_body_content(html_content):
             })
 
     return data
+    
+@app.post("/resume/upload")
+async def upload_resume(file: UploadFile = File(...)):
+    try:
+        # Extract text
+        resume_text = extract_text_from_pdf(file.file)
+        if not resume_text:
+            raise HTTPException(status_code=400, detail="Could not extract text from PDF")
+
+        # Generate upgraded resume
+        upgraded_resume = generate(resume_text)
+
+        return {"upgraded_text": upgraded_resume}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

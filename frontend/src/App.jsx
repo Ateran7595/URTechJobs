@@ -11,6 +11,7 @@ function App() {
     try {
       setLoading(true);
       const API_URL = "https://urtechjobs.onrender.com";
+      // const test = 'http://127.0.0.1:8000';
       const res = await fetch(`${API_URL}/internships`);
       if (!res.ok) throw new Error("Failed to fetch data");
       const data = await res.json();
