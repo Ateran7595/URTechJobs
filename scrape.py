@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from extractText import extract_text_from_pdf
 from resumeUpgrader import generate
 import asyncio
+import requests
+import asyncio
 
 app = FastAPI()
 
@@ -19,20 +21,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- In-memory cache ---
 internships_cache = []
 
-# --- Scraping function ---
-def scrape_website(website: str):
-    chrome_driver_path = "./chromedriver.exe"
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    driver = webdriver.Chrome(service=Service(chrome_driver_path), options=options)
-    try:
-        driver.get(website)
-        return driver.page_source
-    finally:
-        driver.quit()
+def fetch_github_html(url: str) -> str:
+    res = requests.get(url)
+    if res.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to fetch GitHub page")
+    return res.text
 
 def extract_body_content(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
@@ -66,26 +61,21 @@ def extract_body_content(html_content):
 async def scrape_and_cache():
     global internships_cache
     try:
-        html = scrape_website("https://github.com/SimplifyJobs/Summer2026-Internships")
+        html = fetch_github_html("https://github.com/SimplifyJobs/Summer2026-Internships")
         internships_cache = extract_body_content(html)
         print("Internships cache updated")
     except Exception as e:
         print(f"Failed to update internships cache: {e}")
 
-# --- Background updater ---
 @app.on_event("startup")
 async def startup_event():
-    # Initial scrape at startup
     await scrape_and_cache()
-
-    # Schedule periodic updates
     async def periodic_update():
         while True:
             await asyncio.sleep(300)  # 5 minutes
             await scrape_and_cache()
     asyncio.create_task(periodic_update())
 
-# --- Endpoint ---
 @app.get("/internships")
 async def get_internships(force_refresh: bool = False):
     global internships_cache
