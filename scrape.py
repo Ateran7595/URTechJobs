@@ -9,7 +9,6 @@ from extractText import extract_text_from_pdf
 from resumeUpgrader import generate
 import asyncio
 import requests
-import asyncio
 
 app = FastAPI()
 
