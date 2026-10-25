@@ -1,14 +1,12 @@
+
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
-import selenium.webdriver as webdriver
-from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
-import pdfplumber
 from fastapi.middleware.cors import CORSMiddleware
+import requests
+
 from extractText import extract_text_from_pdf
 from resumeUpgrader import generate
-import asyncio
-import requests
 
 app = FastAPI()
 
@@ -20,78 +18,153 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-internships_cache = []
 
-def fetch_github_html(url: str) -> str:
-    res = requests.get(url)
-    if res.status_code != 200:
-        raise HTTPException(status_code=500, detail="Failed to fetch GitHub page")
-    return res.text
+def scrape_website(website: str) -> str:
+    response = requests.get(website, timeout=30)
+    response.raise_for_status()
+    return response.text
 
-def extract_body_content(html_content):
+
+def extract_body_content(html_content: str) -> list:
     soup = BeautifulSoup(html_content, "html.parser")
-    rows = soup.find_all("tr")
-    data = []
-    for row in rows:
-        cols = row.find_all("td")
-        if not cols or len(cols) < 5:
+    internships = []
+
+    for table in soup.find_all("table"):
+        rows = table.find_all("tr")
+
+        if not rows:
             continue
-        if any("🔒" in col.get_text(strip=True) for col in cols):
+
+        headers = [
+            cell.get_text(" ", strip=True).lower()
+            for cell in rows[0].find_all(["th", "td"])
+        ]
+
+        company_idx = next(
+            (i for i, h in enumerate(headers) if "company" in h), None
+        )
+        role_idx = next(
+            (i for i, h in enumerate(headers) if "role" in h or "title" in h),
+            None,
+        )
+        location_idx = next(
+            (i for i, h in enumerate(headers) if "location" in h), None
+        )
+        apply_idx = next(
+            (
+                i for i, h in enumerate(headers)
+                if "application" in h or "apply" in h
+            ),
+            None,
+        )
+        posted_idx = next(
+            (i for i, h in enumerate(headers) if "age" in h or "posted" in h),
+            None,
+        )
+
+        if company_idx is None or role_idx is None:
             continue
-        if cols[4].get_text(strip=True) != "":
-            company_tag = cols[0].find("a")
-            company = company_tag.text.strip() if company_tag else cols[0].get_text(strip=True)
-            company_url = company_tag["href"] if company_tag else None
-            role = cols[1].get_text(strip=True) if len(cols) > 1 else ""
-            location = cols[2].get_text(" ", strip=True) if len(cols) > 2 else ""
-            apply_tag = cols[3].find("a") if len(cols) > 3 else None
-            apply_url = apply_tag["href"] if apply_tag else None
-            posted = cols[4].get_text(strip=True) if len(cols) > 4 else ""
-            data.append({
+
+        for row in rows[1:]:
+            cells = row.find_all(["td", "th"])
+
+            if len(cells) <= max(company_idx, role_idx):
+                continue
+
+            company_cell = cells[company_idx]
+            role_cell = cells[role_idx]
+
+            company_link = company_cell.find("a", href=True)
+            apply_link = (
+                cells[apply_idx].find("a", href=True)
+                if apply_idx is not None and apply_idx < len(cells)
+                else None
+            )
+
+            company = company_cell.get_text(" ", strip=True)
+            role = role_cell.get_text(" ", strip=True)
+
+            location = (
+                cells[location_idx].get_text(" ", strip=True)
+                if location_idx is not None and location_idx < len(cells)
+                else ""
+            )
+
+            posted = (
+                cells[posted_idx].get_text(" ", strip=True)
+                if posted_idx is not None and posted_idx < len(cells)
+                else ""
+            )
+
+            if not company or not role:
+                continue
+
+            internships.append({
                 "Company": company,
-                "Company_URL": company_url,
+                "Company_URL": company_link["href"] if company_link else "",
                 "Role": role,
                 "Location": location,
-                "Apply_URL": apply_url,
+                "Apply_URL": apply_link["href"] if apply_link else "",
                 "Posted": posted,
             })
-    return data
 
-async def scrape_and_cache():
-    global internships_cache
-    try:
-        html = fetch_github_html("https://github.com/SimplifyJobs/Summer2026-Internships")
-        internships_cache = extract_body_content(html)
-        print("Internships cache updated")
-    except Exception as e:
-        print(f"Failed to update internships cache: {e}")
+    print(f"Total internships parsed: {len(internships)}")
+    return internships
 
-@app.on_event("startup")
-async def startup_event():
-    await scrape_and_cache()
-    async def periodic_update():
-        while True:
-            await asyncio.sleep(300)  # 5 minutes
-            await scrape_and_cache()
-    asyncio.create_task(periodic_update())
 
 @app.get("/internships")
-async def get_internships(force_refresh: bool = False):
-    global internships_cache
-    if force_refresh:
-        await scrape_and_cache()
-    if not internships_cache:
-        raise HTTPException(status_code=404, detail="No internship data available yet")
-    return JSONResponse(content=internships_cache)
+def get_internships():
+    url = (
+        "https://raw.githubusercontent.com/"
+        "SimplifyJobs/Summer2027-Internships/master/README.md"
+    )
 
-# --- PDF Resume Upload ---
+    try:
+        html = scrape_website(url)
+        data = extract_body_content(html)
+
+        if not data:
+            raise HTTPException(
+                status_code=404,
+                detail="No internships found",
+            )
+
+        return JSONResponse(content=data)
+
+    except HTTPException:
+        raise
+    except requests.RequestException as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Failed to fetch internship data: {exc}",
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to process internship data: {exc}",
+        ) from exc
+
+
 @app.post("/resume/upload")
 async def upload_resume(file: UploadFile = File(...)):
     try:
         resume_text = extract_text_from_pdf(file.file)
+
         if not resume_text:
-            raise HTTPException(status_code=400, detail="Could not extract text from PDF")
+            raise HTTPException(
+                status_code=400,
+                detail="Could not extract text from PDF",
+            )
+
         upgraded_resume = generate(resume_text)
         return {"upgraded_text": upgraded_resume}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=str(exc),
+        ) from exc
+    finally:
+        await file.close()
