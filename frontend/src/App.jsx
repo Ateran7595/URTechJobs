@@ -1,23 +1,29 @@
-import './App.css'
-import { useState, useEffect } from "react";
+
+import './App.css';
+import { useState, useEffect } from 'react';
 import InternshipTable from './InternshipTable';
 
 function App() {
   const [internships, setInternships] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const fetchInternships = async () => {
     try {
       setLoading(true);
-      const API_URL = "https://urtechjobs.onrender.com";
-      // const test = 'http://127.0.0.1:8000';
+      setError('');
+
+      const API_URL = 'https://urtechjobs.onrender.com';
       const res = await fetch(`${API_URL}/internships`);
-      if (!res.ok) throw new Error("Failed to fetch data");
+
+      if (!res.ok) {
+        throw new Error('Unable to load internships. Please try again.');
+      }
+
       const data = await res.json();
       setInternships(data);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Something went wrong.');
     } finally {
       setLoading(false);
     }
@@ -28,19 +34,76 @@ function App() {
   }, []);
 
   return (
-    <div className='flex flex-col justify-center items-center gap-5 '>
-      <h1 className='text-sky-400 font-semibold md:text-[50px] xs:text-[30px] font-bungee text-center'>
-        Find Your Next Tech Internship!
-      </h1>
-      <h2 className='text-center font-inter font-semibold text-sky-200 md:text-2xl xs:text-[15px] '>
-        Browse hundreds of openings and apply today
-      </h2>
-      {loading ? (
-        <p className='text-sm text-gray-400 mt-2'>Loading Internships...</p>
-      ) : (
-        <InternshipTable internships={internships} />
-      )}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="min-h-screen app-background text-white">
+      {/* Navigation */}
+      <header className="app-container">
+        <nav className="navbar">
+          <a href="/" className="logo">
+            <img src="/favicon.png" alt="URTechJobs logo" className="logo-icon" /> 
+            <span>
+               URTech<span className="brand-accent">Jobs</span>
+            </span>
+          </a>
+        </nav>
+      </header>
+
+      <main className="app-container">
+        {/* Internship listings */}
+        <section id="internships" className="listings-section">
+          <div className="listings-heading">
+            <div>
+              <p className="eyebrow">THE OPPORTUNITIES</p>
+              <h2>Explore internships</h2>
+              <p className="listings-description">
+                Find a role that matches your skills and ambitions.
+              </p>
+            </div>
+
+            <div className="listing-count">
+              <span className="count-dot" />
+              {loading
+                ? 'Loading listings'
+                : `${internships.length} listings`}
+            </div>
+          </div>
+
+          <div className="internship-panel">
+            {loading ? (
+              <div className="status-message">
+                <span className="loading-spinner" />
+                <p>Finding opportunities for you...</p>
+              </div>
+            ) : error ? (
+              <div className="status-message error-message">
+                <span className="error-icon">!</span>
+                <p>{error}</p>
+                <button
+                  type="button"
+                  className="retry-button"
+                  onClick={fetchInternships}
+                >
+                  Try again
+                </button>
+              </div>
+            ) : (
+              <InternshipTable internships={internships} />
+            )}
+          </div>
+        </section>
+
+        <footer className="app-footer">
+          <p>
+            <span className="footer-brand">URTechJobs</span>
+            {' '}· Helping you find your next step in tech.
+          </p>
+          <a href="#top" onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}>
+            Back to top ↑
+          </a>
+        </footer>
+      </main>
     </div>
   );
 }

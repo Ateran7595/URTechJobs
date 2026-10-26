@@ -24,15 +24,17 @@ function ResumeUpgrader() {
 
     try {
       setLoading(true);
-      const API_URL = "https://urtechjobs.onrender.com";
-      // const test = 'http://127.0.0.1:8000';
+      // const API_URL = "https://urtechjobs.onrender.com";
+      const API_URL = 'http://127.0.0.1:8000';
       const response = await fetch(`${API_URL}/resume/upload`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload resume");
+        const errorText = await response.text();
+        console.error("Backend response:", errorText);
+        throw new Error(`Upload failed (${response.status}): ${errorText}`);
       }
 
       const data = await response.json();
@@ -52,7 +54,7 @@ function ResumeUpgrader() {
       const htmlMatch = fullText.match(/<html>[\s\S]*?<\/html>/i);
       if (htmlMatch) setHtmlCode(htmlMatch[0]);
 
-      const feedbackList = parseFeedbackWithTitles(resumeText);
+      const feedbackList = parseFeedbackWithTitles(fullText);
       setFeedbackText(
         feedbackList.length > 0 ? feedbackList : ["No feedback available."]
       );
@@ -105,7 +107,7 @@ function ResumeUpgrader() {
   const downloadPDF = () => {
     const element = document.createElement("div");
     element.innerHTML = pdfHtml; // use the fixed-width version
-  
+
     html2pdf()
       .from(element)
       .set({
@@ -117,7 +119,7 @@ function ResumeUpgrader() {
       })
       .save();
   };
-  
+
 
   const pdfHtml = htmlCode.replace(
     "<head>",
@@ -136,7 +138,7 @@ function ResumeUpgrader() {
       </style>
     </head>`
   );
-  
+
 
   const responsiveHtml = htmlCode.replace(
     "<head>",
@@ -178,7 +180,7 @@ function ResumeUpgrader() {
       <h2 className="text-gray-300 text-center text-base md:text-lg mt-2">
         Transform your resume with AI — smarter, cleaner, and ATS-friendly in moments.
       </h2>
-  
+
       {/* Upload Section */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-2">
         <label className="bg-white text-black font-bold rounded cursor-pointer w-[150px] text-center">
@@ -190,7 +192,7 @@ function ResumeUpgrader() {
             className="hidden"
           />
         </label>
-  
+
         <button
           onClick={handleUpload}
           disabled={loading}
@@ -199,11 +201,11 @@ function ResumeUpgrader() {
           {loading ? "Uploading..." : "Upload Resume"}
         </button>
       </div>
-  
+
       {resumeText && (
         <div className="flex flex-col p-2">
           <iframe style={iframeStyle} srcDoc={responsiveHtml} />
-  
+
           {/* Download PDF Button */}
           <button
             onClick={downloadPDF}
@@ -211,7 +213,7 @@ function ResumeUpgrader() {
           >
             Download as PDF
           </button>
-  
+
           {/* Feedback Section */}
           <div className="max-w-full lg:max-w-4xl text-white mx-auto mt-6">
             <h1 className="text-center font-inter font-bold text-xl md:text-2xl">
@@ -229,7 +231,7 @@ function ResumeUpgrader() {
               )}
             </div>
           </div>
-  
+
           {/* Copy LaTeX Section */}
           <div className="text-center text-white p-4 flex flex-col gap-2">
             <h1 className="font-inter font-bold text-lg md:text-2xl">
@@ -260,7 +262,7 @@ function ResumeUpgrader() {
               Open in Overleaf
             </a>
           </div>
-  
+
           <p className="text-center text-xs md:text-sm text-gray-400 mt-2 px-4">
             <em>
               Note: This feature was AI-assisted. While every effort has been
