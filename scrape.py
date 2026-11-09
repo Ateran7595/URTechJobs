@@ -75,6 +75,12 @@ def extract_body_content(html_content: str) -> list:
             if len(cells) <= max(company_idx, role_idx):
                 continue
 
+            # Skip positions marked as unavailable anywhere in the row
+            row_text = row.get_text(" ", strip=True).lower()
+
+            if "unavailable" in row_text:
+                continue
+
             company_cell = cells[company_idx]
             role_cell = cells[role_idx]
 
@@ -84,6 +90,10 @@ def extract_body_content(html_content: str) -> list:
                 if apply_idx is not None and apply_idx < len(cells)
                 else None
             )
+
+            # Skip positions without an application link
+            if not apply_link or not apply_link.get("href"):
+                continue
 
             company = company_cell.get_text(" ", strip=True)
             role = role_cell.get_text(" ", strip=True)
@@ -146,6 +156,39 @@ def get_internships():
         raise HTTPException(
             status_code=500,
             detail=f"Failed to process internship data: {exc}",
+        ) from exc
+
+
+@app.get("/newgrad")
+def get_newgrad():
+    url = (
+        "https://raw.githubusercontent.com/"
+        "SimplifyJobs/New-Grad-Positions/master/README.md"
+    )
+
+    try:
+        html = scrape_website(url)
+        data = extract_body_content(html)
+
+        if not data:
+            raise HTTPException(
+                status_code=404,
+                detail="No new graduate positions found",
+            )
+
+        return JSONResponse(content=data)
+
+    except HTTPException:
+        raise
+    except requests.RequestException as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Failed to fetch new grad data: {exc}",
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to process new grad data: {exc}",
         ) from exc
 
 

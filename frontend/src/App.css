@@ -1250,3 +1250,65 @@ footer a:hover {
     transition: none;
   }
 }
+
+
+/* Internship / New Grad Toggle */
+
+.job-type-container {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 40px;
+}
+
+.job-type-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.job-type-button {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #a1a1aa;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.job-type-button:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.job-type-button.active {
+  background: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+}
+
+.job-type-button:focus-visible {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .job-type-container {
+    margin-bottom: 28px;
+  }
+
+  .job-type-toggle {
+    width: 100%;
+  }
+
+  .job-type-button {
+    flex: 1;
+    padding: 12px 14px;
+  }
+}

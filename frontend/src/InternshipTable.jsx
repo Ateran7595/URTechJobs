@@ -1,7 +1,9 @@
 
 import { useMemo, useState, useEffect } from "react";
 
-function InternshipTable({ internships = [] }) {
+function InternshipTable({ internships = [], jobType = 'internships' }) {
+  const isNewGrad = jobType === 'newgrad';
+  const jobLabel = isNewGrad ? 'jobs' : 'internships';
   const [search, setSearch] = useState("");
   const [sortRecent, setSortRecent] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -123,7 +125,7 @@ function InternshipTable({ internships = [] }) {
           <span className="font-semibold text-slate-200">
             {filteredInternships.length}
           </span>{" "}
-          internships
+          {jobLabel}
         </p>
 
         {search && (
@@ -366,7 +368,7 @@ function InternshipTable({ internships = [] }) {
       <div className="mt-4 flex items-center justify-between">
 
         <p className="text-xs text-slate-500">
-          Internship listings are subject to change.
+          {isNewGrad ? "New grad listings" : "Internship listings"} are subject to change.
         </p>
 
         {sortRecent && (
