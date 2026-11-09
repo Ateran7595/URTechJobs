@@ -3,8 +3,8 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import InternshipTable from './InternshipTable';
 
-// const API_URL = 'https://urtechjobs.onrender.com';
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'https://urtechjobs.onrender.com';
+// const API_URL = 'http://127.0.0.1:8000';
 
 function App() {
   const [jobType, setJobType] = useState('internships');
